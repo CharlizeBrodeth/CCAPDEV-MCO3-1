@@ -1,0 +1,87 @@
+ <div class="main-container">
+        <div class="profile-container">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <!-- Dynamic profile image -->
+                    <img src="{{user_avatar}}" alt="Profile Picture" class="profile-image"/>
+                </div>
+                <!-- Dynamic user details -->
+                <h1 class="profile-name">{{profile_name}}</h1>
+                <p class="profile-handle">{{user_handle}}</p>
+                <p class="profile-bio">{{user_screen}}</p>
+                <div class="profile-actions">
+                    <button class="btn active-status">ACTIVE STATUS</button>
+                    <a href="/profile_edit">
+                        <button class="btn edit-profile">EDIT PROFILE</button>
+                    </a>
+                    <form id="delete-profile-form" action="/delete_profile" method="post">
+                            <button type="submit" class="btn edit-profile">DELETE PROFILE</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="reviews-container">
+            <div class="review-box review-box-title">SEE REVIEWS</div>
+            <!-- Dynamic reviews loop -->
+            {{#each user_reviews}}
+            <div class="review-box">
+                <img class="box-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRq3HWCE043eXz7M4GSZgbKTIZuD7Ls0Kwt6Q&usqp=CAU" alt="Review Image">
+                <div class="review-des">
+                    <div class="review-text">Restaurant : {{resto_name}}</div>
+                    <div class="review-text">{{review_title}}</div>
+                    <div class="review-text review-text-des">{{review_desc}}</div>
+                </div>
+                <div class="review-btn-form">
+                     <button class="review-edit-btn" data-review-id="{{this._id}}">Edit</button>
+                    <button class="review-delete-btn" data-review-id="{{this._id}}">Delete</button>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+<a href="/home"> <button class="back-btn">Back to homepage</button></a>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.review-delete-btn');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            const reviewId = this.getAttribute('data-review-id');
+            
+            fetch(`/delete_review/${reviewId}`, {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    this.closest('.review-box').remove();
+                } else {
+                    alert('Error deleting review.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting review.');
+            });
+        });
+    });
+});
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const editButtons = document.querySelectorAll('.review-edit-btn');
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+
+            const reviewId = this.getAttribute('data-review-id');
+
+            window.location.href = `/edit_review/${reviewId}`; 
+        });
+    });
+});
+</script>
